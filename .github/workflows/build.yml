@@ -30,4 +30,3 @@ jobs:
         local_dir: "./dist/"
         remote_dir: "./${{ secrets.FTP_SERVER }}/"
         delete: "false"
-        ftp_ssl_allow: "true"
