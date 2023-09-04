@@ -22,7 +22,7 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
-          VITE_API_URL: http://${{ secrets.FTP_SERVER }}/api
+          envkey_VITE_API_URL: http://${{ secrets.FTP_SERVER }}/api
       - run: npm ci
       - run: npm run build --if-present
       - name: "Add server file"
