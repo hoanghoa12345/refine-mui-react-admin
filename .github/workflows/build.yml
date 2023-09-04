@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -13,20 +13,28 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - name: Deploy
-      uses: airvzxf/ftp-deployment-action@latest
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        user: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local_dir: "./dist/"
-        remote_dir: "./${{ secrets.FTP_SERVER }}/"
-        delete: "false"
+      - name: 'Create env file'
+      - run: |
+          echo VITE_API_URL=http://${{ secrets.FTP_SERVER }}/api > .env
+          cat .env
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build --if-present
+      - name: 'Add server file'
+      - run: |
+          mkdir ./dist/api
+          cp -r ./server/* ./dist/api
+      - name: Deploy
+        uses: airvzxf/ftp-deployment-action@latest
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          user: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local_dir: "./dist/"
+          remote_dir: "./${{ secrets.FTP_SERVER }}/"
+          delete: "false"

@@ -1,4 +1,4 @@
-import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
@@ -17,7 +17,6 @@ import routerBindings, {
 import dataProvider from "@refinedev/simple-rest";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { authProvider } from "./authProvider";
-import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import {
   BlogPostCreate,
@@ -31,46 +30,64 @@ import {
   CategoryList,
   CategoryShow,
 } from "./pages/categories";
+import {PaymentBillsCreate, PaymentBillsEdit, PaymentBillsList, PaymentBillsShow} from './pages/payment-bills'
 import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
+import { MonetizationOnRounded } from "@mui/icons-material";
+import { Header } from "./components";
 
+const API_URL = import.meta.env.VITE_API_URL;
+const FAKE_API_URL = "https://api.fake-rest.refine.dev"
 function App() {
+  const dataProviders = {
+    default: dataProvider(API_URL),
+    fake_data: dataProvider(FAKE_API_URL)
+  }
+
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <CssBaseline />
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
           <RefineSnackbarProvider>
             <Refine
-              dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+              dataProvider={dataProviders}
               notificationProvider={notificationProvider}
               routerProvider={routerBindings}
               authProvider={authProvider}
-              resources={[
-                {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
-                  show: "/blog-posts/show/:id",
-                  meta: {
-                    canDelete: true,
-                  },
+              resources={[{
+                name: "blog_posts",
+                list: "/blog-posts",
+                create: "/blog-posts/create",
+                edit: "/blog-posts/edit/:id",
+                show: "/blog-posts/show/:id",
+                meta: {
+                  canDelete: true,
+                  dataProviderName: "fake_data",
                 },
-                {
-                  name: "categories",
-                  list: "/categories",
-                  create: "/categories/create",
-                  edit: "/categories/edit/:id",
-                  show: "/categories/show/:id",
-                  meta: {
-                    canDelete: true,
-                  },
+              }, {
+                name: "categories",
+                list: "/categories",
+                create: "/categories/create",
+                edit: "/categories/edit/:id",
+                show: "/categories/show/:id",
+                meta: {
+                  canDelete: true,
+                  dataProviderName: "fake_data",
                 },
-              ]}
+              }, {
+                name: "payment-bills",
+                list: "/payment-bills",
+                create: "/payment-bills/create",
+                edit: "/payment-bills/edit/:id",
+                show: "/payment-bills/show/:id",
+                meta: {
+                  canDelete: true,
+                  icon: <MonetizationOnRounded />
+                }
+              }]}
               options={{
                 syncWithLocation: true,
                 warnWhenUnsavedChanges: true,
@@ -101,6 +118,12 @@ function App() {
                     <Route path="create" element={<CategoryCreate />} />
                     <Route path="edit/:id" element={<CategoryEdit />} />
                     <Route path="show/:id" element={<CategoryShow />} />
+                  </Route>
+                  <Route path="/payment-bills">
+                    <Route index element={<PaymentBillsList />} />
+                    <Route path="create" element={<PaymentBillsCreate />} />
+                    <Route path="edit/:id" element={<PaymentBillsEdit />} />
+                    <Route path="show/:id" element={<PaymentBillsShow />} />
                   </Route>
                   <Route path="*" element={<ErrorComponent />} />
                 </Route>

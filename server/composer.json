@@ -1,0 +1,16 @@
+{
+    "name": "hoanghoa/server",
+    "description": "REST API",
+    "type": "project",
+    "require": {
+        "mikecao/flight": "9999999-dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hoang Hoa",
+            "email": "44923253+hoanghoa12345@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
