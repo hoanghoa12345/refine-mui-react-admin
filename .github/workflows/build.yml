@@ -25,6 +25,11 @@ jobs:
           envkey_VITE_API_URL: http://${{ secrets.FTP_SERVER }}/api
       - run: npm ci
       - run: npm run build --if-present
+      - name: Install composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          php_version: "7.4"
+          args: --profile --ignore-platform-reqs
       - name: "Add server file"
         run: |
           mkdir ./dist/api
